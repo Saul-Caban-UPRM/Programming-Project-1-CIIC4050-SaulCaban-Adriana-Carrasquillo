@@ -1,2 +1,18 @@
-./radio: 1: ELF·: not found
-./radio: 2: Syntax error: "(" unexpected
+radio pid: 1041
+Planes: 5
+Planes: 10
+RUNWAY OVERLOADED!!!! 
+Planes: 15
+RUNWAY OVERLOADED!!!! 
+Planes: 20
+RUNWAY OVERLOADED!!!! 
+Takeoff clearance 5
+Takeoff clearance 10
+Takeoff clearance 15
+Takeoff clearance 20
+:::: End of operations ::::
+Takeoffs: 20 Planes: 20
+air pid: 1038
+radio pid: 1041
+ground pid: 1039
+:::::::::::::::::::::::::::

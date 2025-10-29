@@ -77,7 +77,7 @@ void *TakeOffsFunction(void *arg)
     else
     {
       /* both busy, wait and retry */
-      usleep(1000);
+      sleep(1);
       continue;
     }
 
@@ -104,7 +104,7 @@ void *TakeOffsFunction(void *arg)
       else
         pthread_mutex_unlock(&runway2_lock);
 
-      usleep(1000);
+      sleep(1);
       continue;
     }
 
