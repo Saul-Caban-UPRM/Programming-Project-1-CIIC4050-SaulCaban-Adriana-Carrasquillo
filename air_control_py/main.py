@@ -183,13 +183,20 @@ def main():
     fd, mm, data = create_shared_memory()
     shm_data = data
     data[0] = os.getpid()
+    try:
+        mm.flush()
+    except Exception:
+        pass
 
     # launch radio and store its pid in shared memory index 1
     radio_process = launch_radio()
-    # wait a tiny bit for the child to start and register its pid
-    time.sleep(0.05)
+    # wait a short time for the radio process to start and install its
+    # signal handlers. A small sleep avoids a race where air_control sends
+    # signals before radio is ready which causes intermittent failures.
+    time.sleep(0.2)
     try:
         data[1] = int(radio_process.pid)
+        mm.flush()
     except Exception:
         data[1] = 0
 
