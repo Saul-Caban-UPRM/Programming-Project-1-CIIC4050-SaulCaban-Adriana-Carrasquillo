@@ -135,15 +135,11 @@ def TakeOffFunction(agent_id: int):
             # simulate takeoff time regardless whether we processed a plane or not
             time.sleep(1)
 
-            # after sleeping, check if overall goal reached and notify radio to terminate
+            # after sleeping, check if overall goal reached
             with state_lock:
                 done = total_takeoffs >= TOTAL_TAKEOFFS
             if done:
-                try:
-                    radio_pid = int(shm_data[1])
-                    os.kill(radio_pid, signal.SIGTERM)
-                except Exception:
-                    pass
+                # let main thread handle termination of radio to avoid races
                 break
         finally:
             # release the runway we acquired
@@ -199,6 +195,30 @@ def main():
         mm.flush()
     except Exception:
         data[1] = 0
+    # wait until the radio process has mapped the shared memory to reduce
+    # races where signals are sent before the radio has installed handlers.
+    radio_pid = None
+    try:
+        radio_pid = int(data[1])
+    except Exception:
+        radio_pid = None
+
+    if radio_pid:
+        mapped = False
+        wait_tries = 0
+        # poll /proc/<pid>/maps for the shared memory file appearing
+        shm_basename = SH_MEMORY_NAME.decode('utf-8').lstrip('/')
+        while not mapped and wait_tries < 100:  # ~5s max
+            try:
+                with open(f"/proc/{radio_pid}/maps", 'r') as m:
+                    maps = m.read()
+                if shm_basename in maps:
+                    mapped = True
+                    break
+            except Exception:
+                pass
+            time.sleep(0.05)
+            wait_tries += 1
 
     # create and start STRIPS threads
     threads = []
@@ -211,10 +231,12 @@ def main():
     for t in threads:
         t.join()
 
-    # cleanup: inform radio (again) and release shared memory
+    # cleanup: allow radio to process final SIGUSR1 then terminate it
     try:
         pid = int(shm_data[1])
         if pid:
+            # wait briefly to allow radio to handle last SIGUSR1
+            time.sleep(0.2)
             try:
                 os.kill(pid, signal.SIGTERM)
             except Exception:
