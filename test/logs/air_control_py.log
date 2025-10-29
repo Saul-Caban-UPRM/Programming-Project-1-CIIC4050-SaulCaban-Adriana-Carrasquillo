@@ -1,4 +1,4 @@
-radio pid: 4622
+radio pid: 10175
 Planes: 5
 Planes: 10
 RUNWAY OVERLOADED!!!! 
@@ -12,7 +12,7 @@ Takeoff clearance 15
 Takeoff clearance 20
 :::: End of operations ::::
 Takeoffs: 20 Planes: 20
-air pid: 4620
-radio pid: 4622
-ground pid: 4663
+air pid: 10173
+radio pid: 10175
+ground pid: 10215
 :::::::::::::::::::::::::::
