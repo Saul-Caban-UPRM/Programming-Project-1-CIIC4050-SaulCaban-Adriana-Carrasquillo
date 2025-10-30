@@ -1,25 +1,26 @@
 #define _POSIX_C_SOURCE 200809L
+#include "functions.h"
+
 #include <ctype.h>
+#include <fcntl.h>
 #include <inttypes.h>
+#include <mqueue.h>
+#include <pthread.h>
+#include <signal.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <mqueue.h>
-#include <pthread.h>
-#include <signal.h>
-#include <stdbool.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include "functions.h"
+#include <unistd.h>
 
 int planes = 0;
 int takeoffs = 0;
 int total_takeoffs = 0;
-int *arr = NULL;
+int* arr = NULL;
 
 /* runway locks and a main state lock */
 static pthread_mutex_t runway1_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -44,8 +45,8 @@ void SigHandler2(int signal) {
   pthread_mutex_unlock(&state_lock);
 }
 
-void *TakeOffsFunction(void *arg) {
-  int id = *((int *)arg);
+void* TakeOffsFunction(void* arg) {
+  int id = *((int*)arg);
   free(arg);
 
   while (1) {
@@ -124,7 +125,7 @@ void *TakeOffsFunction(void *arg) {
     }
   }
 
-  /* finished total_takeoffs: notify radio to 
+  /* finished total_takeoffs: notify radio to
   terminate, unmap shared mem and return */
   if (arr != NULL && arr[1] > 0) {
     kill((pid_t)arr[1], SIGTERM);

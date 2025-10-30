@@ -1,28 +1,28 @@
 #define _POSIX_C_SOURCE 200809L
 #include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <inttypes.h>
+#include <mqueue.h>
+#include <pthread.h>
+#include <signal.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <mqueue.h>
-#include <pthread.h>
-#include <signal.h>
-#include <stdbool.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/time.h>
-#include <errno.h>
+#include <unistd.h>
 
 #define PLANES_LIMIT 20
 #define SH_MEMORY_NAME "/SharedMemory"
 int planes = 0;
 int takeoffs = 0;
 int traffic = 0;
-int *arr;
+int* arr;
 void Traffic(int signum) {
   int waiting = planes - takeoffs;
   if (waiting < 0) {
@@ -62,8 +62,7 @@ void HandleSignal(int signal) {
   }
 }
 
-
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   int fd = shm_open(SH_MEMORY_NAME, O_RDWR, 0666);
   if (fd == -1) {
     perror("shm_open failed");
