@@ -1,4 +1,4 @@
-radio pid: 1982
+radio pid: 27489
 Planes: 5
 Planes: 10
 RUNWAY OVERLOADED!!!! 
@@ -12,7 +12,7 @@ Takeoff clearance 15
 Takeoff clearance 20
 :::: End of operations ::::
 Takeoffs: 20 Planes: 20
-air pid: 1979
-radio pid: 1982
-ground pid: 1980
+air pid: 27486
+radio pid: 27489
+ground pid: 27487
 :::::::::::::::::::::::::::

@@ -63,7 +63,17 @@ void HandleSignal(int signal) {
 }
 
 int main(int argc, char* argv[]) {
-  int fd = shm_open(SH_MEMORY_NAME, O_RDWR, 0666);
+  int fd = -1;
+  int attemps = 0;
+  const int max_attemps = 60;
+  while (1) {
+    fd = shm_open(SH_MEMORY_NAME, O_RDWR, 0666);
+    if (fd != 1) break;
+    if (errno != ENOENT) break;
+    if (++attemps >= max_attemps) break;
+    usleep(100000);
+  }
+
   if (fd == -1) {
     perror("shm_open failed");
     exit(EXIT_FAILURE);
